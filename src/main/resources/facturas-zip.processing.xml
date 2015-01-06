@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration" xmlns:int-xml="http://www.springframework.org/schema/integration/xml"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-4.1.xsd
+		http://www.springframework.org/schema/integration/xml http://www.springframework.org/schema/integration/xml/spring-integration-xml-4.1.xsd">
+
+	<!-- <int-file:outbound-channel-adapter id="save-as-file" -->
+	<!-- auto-create-directory="true" directory-expression="'target/out/' + headers.directory" -->
+	<!-- channel="fileWriterChannel" /> -->
+
+	<int:channel id="facturaIdChannel" />
+	<int-xml:xpath-expression expression="/cfdi:Comprobante/@fecha"
+		id="xpathComprobanteId" ns-prefix="cfdi" ns-uri="http://www.sat.gob.mx/cfd/3">
+	</int-xml:xpath-expression>
+
+	<int-xml:xpath-header-enricher default-overwrite="true"
+		id="idFacturaHeaderEnricher" input-channel="facturaIdChannel" output-channel="facturaAllocatorChannel"
+		should-skip-nulls="true">
+		<int-xml:header name="facturaId" evaluation-type="STRING_RESULT"
+			xpath-expression="/node()/@fecha" />
+	</int-xml:xpath-header-enricher>
+
+	<int:channel id="facturaAllocatorChannel" />
+	<int:service-activator id="facturaAllocator" input-channel="facturaAllocatorChannel"
+		method="allocateBill" ref="zipDecompressor" />
+</beans>

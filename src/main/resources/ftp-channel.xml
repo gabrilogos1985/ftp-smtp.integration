@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration" xmlns:int-ftp="http://www.springframework.org/schema/integration/ftp"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration/ftp http://www.springframework.org/schema/integration/ftp/spring-integration-ftp-4.1.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="ftpSessionFactory" class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">
+		<property name="host" value="${host}" />
+		<property name="port" value="${availableServerPort}" />
+		<property name="username" value="${userid}" />
+		<property name="password" value="${password}" />
+		<property name="clientMode" value="2" />
+	</bean>
+	<bean id="cachingSessionFactory" class="org.springframework.integration.file.remote.session.CachingSessionFactory">
+		<constructor-arg ref="ftpSessionFactory" />
+		<constructor-arg value="10" />
+		<property name="sessionWaitTimeout" value="60000" />
+	</bean>
+
+	<int:channel id="uploadFacturaFtpChannel" />
+	<int-ftp:outbound-channel-adapter id="ftpOutbound"
+		channel="uploadFacturaFtpChannel" remote-directory="${remoteDirectory}" session-factory="cachingSessionFactory"
+		remote-filename-generator-expression="headers.uploadFacturaFilename"
+		use-temporary-file-name="true" />
+
+</beans>
