@@ -33,10 +33,7 @@ import org.supercsv.prefs.CsvPreference;
 @ContextConfiguration(locations = { "classpath:facturacion-integration.xml",
 		"classpath:facturas-zip.processing.xml", "classpath:ftp-channel.xml",
 		"classpath:email-facturas.poller.xml" })
-// @TestPropertySource(properties = { "host = 173.1.169.115",
-// "availableServerPort=8112", "userid=fe.uaq", "password=Feuaq2014",
-// "remoteDirectory:" })
-@TestPropertySource(properties = { "host = 148.220.21.100",
+@TestPropertySource(properties = { "host = 118.210.11.110",
 		"availableServerPort=21", "userid=prueba", "password=prueba",
 		"remoteDirectory:layout" })
 public class GenerateFacturaSystemTest {
